@@ -14,9 +14,50 @@
 	*/
 	
 	function initialize_field( $field ) {
-		
-		//$field.doStuff();
-		
+
+		var frame,
+		fileUploadButton = $field.find('.upload_image_button'),
+		fileIdInput = $field.find('input[type="hidden"]'),
+		filePreview = $field.find('.file_preview')
+		;
+
+		fileUploadButton.on( 'click', function( event ){
+
+			event.preventDefault();
+
+			// If the media frame already exists, reopen it.
+			if ( frame ) {
+				frame.open();
+				return;
+			}
+
+			// Create a new media frame
+			frame = wp.media({
+				title: 'Select or Upload a CSV file to import.',
+				button: {
+					text: 'Import CSV'
+				},
+				library: {
+					type: ["text/csv"]
+				},
+				multiple: false  // Set to true to allow multiple files to be selected
+			});
+			// When an image is selected in the media frame...
+			frame.on( 'select', function() {
+
+				// Get media attachment details from the frame state
+				var attachment = frame.state().get('selection').first().toJSON();
+
+				filePreview.text(attachment.filename);
+
+				// Send the attachment id to our hidden input
+				fileIdInput.val( attachment.id );
+			});
+
+			// Finally, open the modal on click
+			frame.open();
+		});
+
 	}
 	
 	
@@ -33,8 +74,8 @@
 		*  @return	n/a
 		*/
 		
-		acf.add_action('ready_field/type=FIELD_NAME', initialize_field);
-		acf.add_action('append_field/type=FIELD_NAME', initialize_field);
+		acf.add_action('ready_field/type=csv_to_json', initialize_field);
+		acf.add_action('append_field/type=csv_to_json', initialize_field);
 		
 		
 	} else {
@@ -52,7 +93,7 @@
 		$(document).on('acf/setup_fields', function(e, postbox){
 			
 			// find all relevant fields
-			$(postbox).find('.field[data-field_type="FIELD_NAME"]').each(function(){
+			$(postbox).find('.field[data-field_type="csv_to_json"]').each(function(){
 				
 				// initialize
 				initialize_field( $(this) );

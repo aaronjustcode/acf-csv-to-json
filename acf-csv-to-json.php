@@ -1,12 +1,12 @@
 <?php
 
 /*
-Plugin Name: Advanced Custom Fields: FIELD_LABEL
-Plugin URI: PLUGIN_URL
-Description: SHORT_DESCRIPTION
+Plugin Name: Advanced Custom Fields: CSV to JSON
+Plugin URI: https://github.com/aaronjustcode/acf-csv-to-json
+Description: ACF field to convert CSV files to JSON data
 Version: 1.0.0
-Author: AUTHOR_NAME
-Author URI: AUTHOR_URL
+Author: aaronjustcode
+Author URI: https://peloton.codes
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
@@ -16,9 +16,9 @@ if( ! defined( 'ABSPATH' ) ) exit;
 
 
 // check if class already exists
-if( !class_exists('NAMESPACE_acf_plugin_FIELD_NAME') ) :
+if( !class_exists('lgnd_acf_plugin_csv_to_json') ) :
 
-class NAMESPACE_acf_plugin_FIELD_NAME {
+class lgnd_acf_plugin_csv_to_json {
 	
 	// vars
 	var $settings;
@@ -49,8 +49,15 @@ class NAMESPACE_acf_plugin_FIELD_NAME {
 		
 		
 		// include field
+		function cc_mime_types($mimes) {
+			$mimes['csv'] = 'text/csv';
+			return $mimes;
+		}
+		add_filter('upload_mimes', 'cc_mime_types');
+
 		add_action('acf/include_field_types', 	array($this, 'include_field')); // v5
 		add_action('acf/register_fields', 		array($this, 'include_field')); // v4
+
 	}
 	
 	
@@ -74,18 +81,18 @@ class NAMESPACE_acf_plugin_FIELD_NAME {
 		
 		
 		// load textdomain
-		load_plugin_textdomain( 'TEXTDOMAIN', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' ); 
+		load_plugin_textdomain( 'acf-csv-to-json', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' ); 
 		
 		
 		// include
-		include_once('fields/class-NAMESPACE-acf-field-FIELD-NAME-v' . $version . '.php');
+		include_once('fields/class-lgnd-acf-field-csv-to-json-v' . $version . '.php');
 	}
 	
 }
 
 
 // initialize
-new NAMESPACE_acf_plugin_FIELD_NAME();
+new lgnd_acf_plugin_csv_to_json();
 
 
 // class_exists check
